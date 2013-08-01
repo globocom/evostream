@@ -34,6 +34,7 @@ end
 
 client = Evostream::Client.new
 client.liststreams
+```
 
 ## Contributing
 
