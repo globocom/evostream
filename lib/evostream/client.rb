@@ -1,7 +1,7 @@
 # coding: utf-8
 require 'base64'
-require 'rest-client'
 require 'json'
+require 'net/http'
 
 module Evostream
   class Client
@@ -21,8 +21,8 @@ module Evostream
     end
 
     def method_missing(method, *args)
-      params = !args.empty? ? encode_params(args.first) : {}
-      response = RestClient.get(service_url(method), { :params => params })
+      params = !args.empty? ? args.first : {}
+      response = api_call(method, params)
       json = JSON.parse(response.body)
       if json['status'] == 'SUCCESS'
         json['data']
@@ -32,8 +32,22 @@ module Evostream
     end
 
     private
-    def service_url(service)
-      "#{base_url}/#{service}"
+    def api_call(method, params)
+      url = URI.parse(service_url(method, params))
+      request = Net::HTTP::Get.new(url.to_s)
+      response = Net::HTTP.start(url.host, url.port) {|http|
+        http.request(request)
+      }
+      response
+    end
+
+    def service_url(service, params)
+      url = "#{base_url}/#{service}"
+      unless params.empty?
+        url + "?params=#{encode_params(params)}"
+      else
+        url
+      end
     end
 
     def base_url
@@ -41,8 +55,7 @@ module Evostream
     end
 
     def encode_params(params)
-      base64_params = Base64.encode64(params.collect {|k, v| "#{k}=#{v}" }.join(' ')).chomp
-      { :params => base64_params }
+      Base64.encode64(params.map {|k, v| "#{k}=#{v}" }.join(' ')).chomp
     end
 
   end # Client
