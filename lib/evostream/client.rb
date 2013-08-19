@@ -20,18 +20,22 @@ module Evostream
       end
     end
 
+    private
     def method_missing(method, *args)
       params = !args.empty? ? args.first : {}
       response = api_call(method, params)
-      json = JSON.parse(response.body)
-      if json['status'] == 'SUCCESS'
-        json['data']
+      if response.code.to_i == 200
+        json = parse(response.body)
+        if json['status'] == 'SUCCESS'
+          json['data']
+        else
+          super
+        end
       else
-        super
+        raise response.body
       end
     end
 
-    private
     def api_call(method, params)
       url = URI.parse(service_url(method, params))
       request = Net::HTTP::Get.new(url.to_s)
@@ -58,5 +62,10 @@ module Evostream
       Base64.encode64(params.map {|k, v| "#{k}=#{v}" }.join(' ')).chomp
     end
 
+    def parse(text)
+      JSON.parse(text)
+    rescue JSON::ParserError => ex
+      raise "Invalid response: #{ex.message}"
+    end
   end # Client
 end
