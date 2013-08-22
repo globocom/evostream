@@ -1,5 +1,7 @@
 # Evostream
 
+[![Build Status](https://travis-ci.org/globocom/evostream.png?branch=master)](https://travis-ci.org/globocom/evostream)
+
 Ruby wrapper for the Evostream API
 
 ## Installation
