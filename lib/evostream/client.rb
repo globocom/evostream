@@ -59,7 +59,7 @@ module Evostream
     end
 
     def encode_params(params)
-      Base64.encode64(params.map {|k, v| "#{k}=#{v}" }.join(' ')).chomp
+      Base64.urlsafe_encode64(params.map {|k, v| "#{k}=#{v}" }.join(' ')).chomp
     end
 
     def parse(text)
