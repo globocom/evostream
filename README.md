@@ -20,6 +20,13 @@ Or install it yourself as:
 
 ## Usage
 
+```ruby
+client = Evostream::Client.new host: 'evostream.example.com', port: 80, path_prefix: '/evo'
+client.liststreams
+# With parameters
+client.pullstream uri: "rtmp://localhost/live/my_stream", localstreamname: "master", keepalive: 1
+```
+
 You may use the block style configuration. The following code could be placed
 into a +config/initializers/evostream.rb+ when used in a Rails project.
 
