@@ -56,4 +56,11 @@ describe Evostream::Client do
     subject.some_service('first_param' => 'xxx', 'second_param' => 'xxx')
     WebMock.should have_requested(:get, "http://somehost:80/some_path/some_service?params=Zmlyc3RfcGFyYW09eHh4IHNlY29uZF9wYXJhbT14eHg=")
   end
+
+  it "should encode params with url safe base64 to support longer param values" do
+    stub_request(:get, /.*some_service.*/).
+      to_return(status: 200, body: '{"data":null,"description":"","status":"SUCCESS"}')
+    subject.some_service(:first_param => 'xxx', :second_param => 'xxx', :third_param => 'xxx')
+    WebMock.should have_requested(:get, "http://somehost:80/some_path/some_service?params=Zmlyc3RfcGFyYW09eHh4IHNlY29uZF9wYXJhbT14eHggdGhpcmRfcGFyYW09eHh4")
+  end
 end
