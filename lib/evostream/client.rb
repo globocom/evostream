@@ -38,7 +38,9 @@ module Evostream
 
     def api_call(method, params)
       url = URI.parse(service_url(method, params))
-      Net::HTTP.get_response(url)
+      req = Net::HTTP::Get.new(url)
+      req.basic_auth(@username, @password)
+      Net::HTTP.start(url.hostname, url.port) { |http| http.request(req) }
     end
 
     def service_url(service, params)

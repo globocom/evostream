@@ -1,11 +1,13 @@
 # coding: utf-8
 module Evostream
   module Configuration
-    VALID_CONFIG_KEYS = [:host, :port, :path_prefix].freeze
+    VALID_CONFIG_KEYS = [:host, :port, :path_prefix, :username, :password].freeze
     OPTIONAL_CONFIG_KEYS = VALID_CONFIG_KEYS - [:host]
 
     DEFAULT_PORT = 80
     DEFAULT_PATH_PREFIX = ''
+    DEFAULT_USERNAME = ''
+    DEFAULT_PASSWORD = ''
 
     # Build accessor methods for every config options so we can do this, for example:
     #   Evostream.host = 'evostream.example.com'
@@ -19,6 +21,8 @@ module Evostream
     def reset
       self.port        = DEFAULT_PORT
       self.path_prefix = DEFAULT_PATH_PREFIX
+      self.username    = DEFAULT_USERNAME
+      self.password    = DEFAULT_PASSWORD
     end
 
     # config/initializers/evostream.rb (for instance)
@@ -27,6 +31,8 @@ module Evostream
     #   config.host = 'evostream.example.com'
     #   config.port = 80
     #   config.path_prefix = '/evo'
+    #   config.username = 'evo'
+    #   config.password = 'password'
     # end
     #
     # elsewhere
