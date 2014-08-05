@@ -19,10 +19,16 @@ describe Evostream::Client do
     subject.liststreams.should == JSON.parse(liststreams)['data']
   end
 
-  it "should handle a FAIL response to a non existant service" do
+  it "should handle a FAIL response of command not known to a non existant service" do
     stub_request(:get, "http://somehost:80/some_path/non_existant_service").
       to_return(status: 200, body: '{"data":null,"description":"command non_existant_service not known. Type help for list of commands","status":"FAIL"}')
     expect { subject.non_existant_service }.to raise_error(NoMethodError)
+  end
+
+  it "should handle a FAIL response with the error message returned by the api" do
+    stub_request(:get, "http://somehost:80/some_path/createingestpoint").
+      to_return(status: 200, body: '{"data":null,"description":"Unable to create ingest point `private_name` -> `public_name`","status":"FAIL"}')
+    expect { subject.createingestpoint }.to raise_error("Unable to create ingest point `private_name` -> `public_name`")
   end
 
   it "should rescue from an unexpected response" do

@@ -28,8 +28,10 @@ module Evostream
         json = parse(response.body)
         if json['status'] == 'SUCCESS'
           json['data']
-        else
+        elsif json['status'] == 'FAIL' && json['description'] =~ /command .* not known/
           super
+        else
+          raise json['description']
         end
       else
         raise response.body
