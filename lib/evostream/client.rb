@@ -2,6 +2,7 @@
 require 'base64'
 require 'json'
 require 'net/http'
+require 'debugger'
 
 module Evostream
   class Client
@@ -39,8 +40,11 @@ module Evostream
     end
 
     def api_call(method, params)
-      url = URI.parse(service_url(method, params))
-      Net::HTTP.get_response(url)
+      uri = URI.parse(service_url(method, params))
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.read_timeout = @timeout
+      http.open_timeout = @timeout
+      http.request_get(uri.request_uri)
     end
 
     def service_url(service, params)

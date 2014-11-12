@@ -69,4 +69,26 @@ describe Evostream::Client do
     subject.some_service(:first_param => 'xxx', :second_param => 'xxx', :third_param => 'xxx')
     WebMock.should have_requested(:get, "http://somehost:80/some_path/some_service?params=Zmlyc3RfcGFyYW09eHh4IHNlY29uZF9wYXJhbT14eHggdGhpcmRfcGFyYW09eHh4")
   end
+
+  describe "timeout" do
+    before do
+      WebMock.allow_net_connect!
+    end
+
+    after do
+      WebMock.disable_net_connect!
+    end
+
+    it "should be able to specify a timeout value" do
+      evo = Evostream::Client.new(:host => '10.10.10.10', :path_prefix => '/some_path', :timeout => 1)
+      expect { evo.liststreams }.to raise_error(Net::OpenTimeout)
+    end
+
+    it "should timeout by the default timeout value (#{Evostream::Configuration::DEFAULT_TIMEOUT})" do
+      start = Time.now
+      evo = Evostream::Client.new(:host => '10.10.10.10', :path_prefix => '/some_path')
+      expect { evo.liststreams }.to raise_error(Net::OpenTimeout)
+      expect(Time.now - start).to be < (Evostream::Configuration::DEFAULT_TIMEOUT + 0.01)
+    end
+  end
 end
