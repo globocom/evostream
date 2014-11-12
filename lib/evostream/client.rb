@@ -2,7 +2,6 @@
 require 'base64'
 require 'json'
 require 'net/http'
-require 'debugger'
 
 module Evostream
   class Client
