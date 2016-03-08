@@ -28,8 +28,10 @@ module Evostream
         json = parse(response.body)
         if json['status'] == 'SUCCESS'
           json['data']
-        else
+        elsif json['status'] == 'FAIL' && json['description'] =~ /command .* not known/
           super
+        else
+          raise json['description']
         end
       else
         raise response.body
@@ -37,10 +39,13 @@ module Evostream
     end
 
     def api_call(method, params)
-      url = URI.parse(service_url(method, params))
-      req = Net::HTTP::Get.new(url)
-      req.basic_auth(@username, @password)
-      Net::HTTP.start(url.hostname, url.port) { |http| http.request(req) }
+      uri = URI.parse(service_url(method, params))
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.read_timeout = @timeout
+      http.open_timeout = @timeout
+      request = Net::HTTP::Get.new(uri.request_uri)
+      request.basic_auth(@username, @password)
+      http.request(request)
     end
 
     def service_url(service, params)
