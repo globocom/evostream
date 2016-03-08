@@ -1,9 +1,12 @@
 # coding: utf-8
 module Evostream
   module Configuration
-    VALID_CONFIG_KEYS = [:host, :port, :path_prefix, :timeout, :username, :password].freeze
+    VALID_CONFIG_KEYS = [
+      :host, :protocol, :port, :path_prefix, :timeout, :username, :password
+    ].freeze
     OPTIONAL_CONFIG_KEYS = VALID_CONFIG_KEYS - [:host]
 
+    DEFAULT_PROTOCOL = 'http'
     DEFAULT_PORT = 80
     DEFAULT_PATH_PREFIX = ''
     DEFAULT_USERNAME = ''
@@ -20,6 +23,7 @@ module Evostream
     end
 
     def reset
+      self.protocol    = DEFAULT_PROTOCOL
       self.port        = DEFAULT_PORT
       self.path_prefix = DEFAULT_PATH_PREFIX
       self.username    = DEFAULT_USERNAME
@@ -31,6 +35,7 @@ module Evostream
     #
     # Evostream.configure do |config|
     #   config.host = 'evostream.example.com'
+    #   config.protocol = 'http'
     #   config.port = 80
     #   config.path_prefix = '/evo'
     #   config.username = 'evo'

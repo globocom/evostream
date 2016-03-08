@@ -41,6 +41,10 @@ Evostream.configure do |config|
   # Set the username and password when using http basic auth
   # config.username = 'evostream'
   # config.password = 'passw0rd'
+  
+  # Set the protocol and port for using HTTPS
+  # config.protocol = 'https'
+  # config.port = 443
 end
 
 # elsewhere

@@ -43,6 +43,7 @@ module Evostream
       http = Net::HTTP.new(uri.host, uri.port)
       http.read_timeout = @timeout
       http.open_timeout = @timeout
+      http.use_ssl = true if @protocol == "https"
       request = Net::HTTP::Get.new(uri.request_uri)
       request.basic_auth(@username, @password)
       http.request(request)
@@ -58,7 +59,7 @@ module Evostream
     end
 
     def base_url
-      "http://#{@host}:#{@port}#{@path_prefix}"
+      "#{@protocol}://#{@host}:#{@port}#{@path_prefix}"
     end
 
     def encode_params(params)
