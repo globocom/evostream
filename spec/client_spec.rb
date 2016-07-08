@@ -70,6 +70,36 @@ describe Evostream::Client do
     WebMock.should have_requested(:get, "http://somehost:80/some_path/some_service?params=Zmlyc3RfcGFyYW09eHh4IHNlY29uZF9wYXJhbT14eHggdGhpcmRfcGFyYW09eHh4")
   end
 
+  describe "https" do
+    it "should be able to specify https as protocol" do
+      auth_evo = Evostream::Client.new({
+        :host => 'somehost',
+        :path_prefix => '/some_path',
+        :protocol => 'https',
+        :port => '443'
+      })
+      stub_request(:get, /.*some_service.*/).
+        to_return(status: 200, body: '{"data":null,"description":"","status":"SUCCESS"}')
+      auth_evo.some_service(:first_param => 'xxx', :second_param => 'xxx', :third_param => 'xxx')
+      WebMock.should have_requested(:get, "https://somehost:443/some_path/some_service?params=Zmlyc3RfcGFyYW09eHh4IHNlY29uZF9wYXJhbT14eHggdGhpcmRfcGFyYW09eHh4")
+    end
+  end
+
+  describe "basic auth" do
+    it "should encode the username and the password to support basic auth" do
+      auth_evo = Evostream::Client.new({
+        :host => 'somehost',
+        :path_prefix => '/some_path',
+        :username => 'user',
+        :password => 'password'
+      })
+      stub_request(:get, /.*some_service.*/).
+        to_return(status: 200, body: '{"data":null,"description":"","status":"SUCCESS"}')
+      auth_evo.some_service(:first_param => 'xxx', :second_param => 'xxx', :third_param => 'xxx')
+      WebMock.should have_requested(:get, "http://user:password@somehost:80/some_path/some_service?params=Zmlyc3RfcGFyYW09eHh4IHNlY29uZF9wYXJhbT14eHggdGhpcmRfcGFyYW09eHh4")
+    end
+  end
+  
   describe "timeout" do
     before do
       WebMock.allow_net_connect!
