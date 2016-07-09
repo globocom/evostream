@@ -1,7 +1,15 @@
 version: '2'
 services:
-  test:
+  base:
     build: .
-    command: bundle exec rake spec
     volumes:
       - .:/app
+  test:
+    extends:
+      service: base
+    command: bundle exec rake spec
+
+  builder:
+    extends:
+      service: base
+    command: gem build evostream.gemspec
