@@ -41,7 +41,7 @@ Evostream.configure do |config|
   # Set the username and password when using http basic auth
   # config.username = 'evostream'
   # config.password = 'passw0rd'
-  
+
   # Set the protocol and port for using HTTPS
   # config.protocol = 'https'
   # config.port = 443
@@ -52,6 +52,16 @@ end
 client = Evostream::Client.new
 client.liststreams
 ```
+
+## Running tests
+
+### Local
+
+    $ bundle exec rake spec
+
+### Docker
+
+    $ docker-compose run --rm test
 
 ## Contributing
 
